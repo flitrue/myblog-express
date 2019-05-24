@@ -4,11 +4,113 @@
 <head>
   <title>Express</title>
   <link rel="stylesheet" href="/stylesheets/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
 
 <body>
-  <h1>Express</h1>
-  <p>Welcome to Express</p>
+  <div id="app">
+    <div class="container">
+      <div class="btn-grunp">
+        <div class="stock-btn" :class="{active: active==index}" v-for="(item,index) in stockList" :key="index"
+          @click="changeStock(index)">
+          <p>{{item.name}}</p>
+          <span>{{item.code}}</span>
+        </div>
+      </div>
+
+      <div class="stock-panel">
+        <div>
+          <div>昨收：</div>
+          <div><input type="number" step="0.1" v-model="close"></div>
+        </div>
+        <div>
+          <div>现价：</div>
+          <div><input type="number" step="0.1" v-model="open"></div>
+        </div>
+        <div v-show="false">
+          <div>成本：</div>
+          <div><input type="number" step="0.1" v-model="cost"></div>
+        </div>
+        <div>
+          <div>涨幅(%)：</div>
+          <div><input type="number" step="0.1" readonly v-model="percent"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </body>
+<script>
+  let app = new Vue({
+    el: '#app',
+    data: {
+      active: 0,
+      open: "",
+      cost: "",
+      close: "",
+      stockList: [
+        {
+          code: "000565",
+          name: "渝三峡A",
+          open: "5.60",
+          close: "",
+          cost: "",
+          percent: ""
+        }, {
+          code: "000725",
+          name: "京东方",
+          open: "",
+          close: "",
+          cost: "",
+          percent: ""
+        }, {
+          code: "东信和平",
+          name: "002017",
+          open: "",
+          close: "",
+          cost: "",
+          percent: ""
+        }, {
+          code: "600050",
+          name: "中国联通",
+          open: "",
+          close: "",
+          cost: "",
+          percent: ""
+        }, {
+          code: "600175",
+          name: "美都能源",
+          open: "",
+          close: "",
+          cost: "",
+          percent: ""
+        }
+      ]
+    },
+    computed: {
+      percent() {
+        let open = parseFloat(this.open);
+        let close = parseFloat(this.close);
+        if(!isNaN(open) && !isNaN(close)) return ((open-close) / close * 100).toFixed(2)
+      },
+    },
+    watch: {
+
+    },
+    methods: {
+      changeStock(index) {
+        this.active = index;
+        const event = new CustomEvent('stock-click', { detail: {index}});
+        window.dispatchEvent(event)
+      }
+    },
+    mounted() {
+      window.addEventListener('stock-click', (data)=>{
+        console.log('stuout', data)
+      })
+    }
+  });
+</script>
 
 </html>
